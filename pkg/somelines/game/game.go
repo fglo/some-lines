@@ -30,6 +30,7 @@ type Game struct {
 	quitIsPressed    bool
 	restartIsPressed bool
 	forwardIsPressed bool
+	reverseIsPressed bool
 	debugIsToggled   bool
 
 	paused bool
@@ -58,7 +59,7 @@ func New() *Game {
 }
 
 func (g *Game) getWindowSize() (int, int) {
-	var factor float32 = 4
+	var factor float32 = 3
 	return int(float32(g.screenWidth) * factor), int(float32(g.screenHeight) * factor)
 }
 
@@ -76,6 +77,7 @@ func (g *Game) Update() error {
 	g.checkRestartButton()
 	g.checkPauseButton()
 	g.checkForwardButton()
+	g.checkReverseButton()
 	g.checkDebugButton()
 	if err := g.board.Update(); err != nil {
 		return err
@@ -121,6 +123,15 @@ func (g *Game) checkForwardButton() {
 	}
 }
 
+func (g *Game) checkReverseButton() {
+	if !g.reverseIsPressed && (inpututil.IsKeyJustPressed(ebiten.KeyB) || inpututil.IsKeyJustPressed(ebiten.KeyArrowLeft)) {
+		g.reverseIsPressed = true
+	}
+	if g.reverseIsPressed && (inpututil.IsKeyJustReleased(ebiten.KeyB) || inpututil.IsKeyJustReleased(ebiten.KeyArrowLeft)) {
+		g.reverseIsPressed = false
+	}
+}
+
 func (g *Game) checkDebugButton() {
 	if inpututil.IsKeyJustPressed(ebiten.KeyD) {
 		g.debugIsToggled = !g.debugIsToggled
@@ -132,11 +143,14 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	if g.pixels == nil {
 		g.pixels = make([]byte, screenWidth*screenHeight*4)
 	}
-	if !g.paused {
-		g.clearPixels()
-		g.board.Draw(g.pixels, g.counter, g.focalLength)
+	if !g.paused || g.forwardIsPressed {
 		g.counter++
+	} else if g.reverseIsPressed {
+		g.counter--
 	}
+	g.clearPixels()
+	g.board.Draw(g.pixels, g.counter, g.focalLength)
+	g.board.Draw2(g.pixels, g.counter, g.focalLength)
 	screen.WritePixels(g.pixels)
 }
 

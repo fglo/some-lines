@@ -1,5 +1,7 @@
 package point
 
+import "math"
+
 type Point2D struct {
 	X int
 	Y int
@@ -11,6 +13,19 @@ func NewPoint2D(x, y int) *Point2D {
 	p.Y = y
 
 	return p
+}
+
+func (p *Point2D) RotatePoint(pc *Point2D, theta float64) *Point2D {
+	sinTheta, cosTheta := math.Sincos(theta)
+
+	x := p.X - pc.X
+	y := p.Y - pc.Y
+
+	xr := int(float64(x)*cosTheta - float64(y)*sinTheta)
+	yr := int(float64(x)*sinTheta + float64(y)*cosTheta)
+
+	pr := NewPoint2D(xr+pc.X, yr+pc.Y)
+	return pr
 }
 
 type Point3D struct {
@@ -55,4 +70,50 @@ func (p *Point3D) AddToY(dy int) *Point3D {
 
 func (p *Point3D) AddToZ(dz int) *Point3D {
 	return NewPoint3D(p.X, p.Y, p.Z+dz)
+}
+
+func (p *Point3D) RotatePoint3DAroundX(pc *Point3D, theta float64) *Point3D {
+	sinTheta, cosTheta := math.Sincos(theta)
+
+	x := p.X
+	y := p.Y - pc.Y
+	z := p.Z - pc.Z
+
+	yr := int(float64(y)*cosTheta - float64(z)*sinTheta)
+	zr := int(float64(y)*sinTheta + float64(z)*cosTheta)
+
+	pr := NewPoint3D(x, yr+pc.Y, zr+pc.Z)
+	return pr
+}
+
+func (p *Point3D) RotatePoint3DAroundY(pc *Point3D, theta float64) *Point3D {
+	sinTheta, cosTheta := math.Sincos(theta)
+
+	x := p.X - pc.X
+	y := p.Y
+	z := p.Z - pc.Z
+
+	xr := int(float64(x)*cosTheta + float64(z)*sinTheta)
+	zr := int(-float64(x)*sinTheta + float64(z)*cosTheta)
+
+	pr := NewPoint3D(xr+pc.X, y, zr+pc.Z)
+	return pr
+}
+
+func (p *Point3D) RotatePoint3DAroundZ(pc *Point3D, theta float64) *Point3D {
+	sinTheta, cosTheta := math.Sincos(theta)
+
+	x := p.X - pc.X
+	y := p.Y - pc.Y
+	z := p.Z
+
+	xr := int(float64(x)*cosTheta - float64(y)*sinTheta)
+	yr := int(float64(x)*sinTheta + float64(y)*cosTheta)
+
+	pr := NewPoint3D(xr+pc.X, yr+pc.Y, z)
+	return pr
+}
+
+func (p *Point3D) RotatePoint3DAroundXAndY(pc *Point3D, theta float64) *Point3D {
+	return p.RotatePoint3DAroundX(pc, theta).RotatePoint3DAroundY(pc, theta)
 }
