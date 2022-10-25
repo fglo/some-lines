@@ -28,8 +28,8 @@ type Game struct {
 	screenHeight int
 
 	quitIsPressed    bool
-	restartIsPressed bool
 	forwardIsPressed bool
+	reverseIsPressed bool
 	debugIsToggled   bool
 
 	paused bool
@@ -58,7 +58,7 @@ func New() *Game {
 }
 
 func (g *Game) getWindowSize() (int, int) {
-	var factor float32 = 4
+	var factor float32 = 3
 	return int(float32(g.screenWidth) * factor), int(float32(g.screenHeight) * factor)
 }
 
@@ -67,15 +67,12 @@ func (g *Game) Layout(outsideWidth, outsideHeight int) (screenWidth, screenHeigh
 	return g.screenWidth, g.screenHeight
 }
 
-func (g *Game) restart() {
-	g.pixels = make([]byte, screenWidth*screenHeight*4)
-}
-
 // Update updates the current game state.
 func (g *Game) Update() error {
-	g.checkRestartButton()
+	g.checkShadeButton()
 	g.checkPauseButton()
 	g.checkForwardButton()
+	g.checkReverseButton()
 	g.checkDebugButton()
 	if err := g.board.Update(); err != nil {
 		return err
@@ -94,13 +91,9 @@ func (g *Game) checkQuitButton() error {
 	return nil
 }
 
-func (g *Game) checkRestartButton() {
-	if !g.restartIsPressed && inpututil.IsKeyJustPressed(ebiten.KeyR) {
-		g.restartIsPressed = true
-	}
-	if g.restartIsPressed && inpututil.IsKeyJustReleased(ebiten.KeyR) {
-		g.restartIsPressed = false
-		g.restart()
+func (g *Game) checkShadeButton() {
+	if inpututil.IsKeyJustPressed(ebiten.KeyS) {
+		g.board.ToggleShading()
 	}
 }
 
@@ -113,11 +106,18 @@ func (g *Game) checkPauseButton() {
 func (g *Game) checkForwardButton() {
 	if !g.forwardIsPressed && (inpututil.IsKeyJustPressed(ebiten.KeyF) || inpututil.IsKeyJustPressed(ebiten.KeyArrowRight)) {
 		g.forwardIsPressed = true
-		g.board.Forward(true)
 	}
 	if g.forwardIsPressed && (inpututil.IsKeyJustReleased(ebiten.KeyF) || inpututil.IsKeyJustReleased(ebiten.KeyArrowRight)) {
 		g.forwardIsPressed = false
-		g.board.Forward(false)
+	}
+}
+
+func (g *Game) checkReverseButton() {
+	if !g.reverseIsPressed && (inpututil.IsKeyJustPressed(ebiten.KeyB) || inpututil.IsKeyJustPressed(ebiten.KeyArrowLeft)) {
+		g.reverseIsPressed = true
+	}
+	if g.reverseIsPressed && (inpututil.IsKeyJustReleased(ebiten.KeyB) || inpututil.IsKeyJustReleased(ebiten.KeyArrowLeft)) {
+		g.reverseIsPressed = false
 	}
 }
 
@@ -132,11 +132,14 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	if g.pixels == nil {
 		g.pixels = make([]byte, screenWidth*screenHeight*4)
 	}
-	if !g.paused {
-		g.clearPixels()
-		g.board.Draw(g.pixels, g.counter, g.focalLength)
+	if !g.paused || g.forwardIsPressed {
 		g.counter++
+	} else if g.reverseIsPressed {
+		g.counter--
 	}
+	g.clearPixels()
+	g.board.Draw(g.pixels, g.counter, g.focalLength)
+	g.board.Draw2(g.pixels, g.counter, g.focalLength)
 	screen.WritePixels(g.pixels)
 }
 
