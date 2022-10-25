@@ -10,3 +10,11 @@ Had some fun with rendering lines and rotating coordinates in 2D and 3D.
 ## Gif
 
 ![gif](./img/gif.gif)
+
+## Instructions
+
+- press P: pause/unpause
+- hold F: play paused sim
+- hold B: play paused sim backwards
+- press S: toggle shading
+- press Q: quit
