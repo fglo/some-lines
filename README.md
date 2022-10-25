@@ -2,3 +2,7 @@
 ![Deploy Webasm](https://github.com/fglo/some-lines/actions/workflows/deploy-webasm.yml/badge.svg)
 
 # Some Lines
+
+## Gif
+
+![gif](./img/gif.gif)

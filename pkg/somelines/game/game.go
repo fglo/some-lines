@@ -2,14 +2,11 @@ package game
 
 import (
 	"errors"
-	"fmt"
 	"math/rand"
-	"strings"
 	"time"
 
 	"github.com/fglo/some-lines/pkg/somelines/board"
 	ebiten "github.com/hajimehoshi/ebiten/v2"
-	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
 )
 
@@ -30,11 +27,10 @@ type Game struct {
 	screenWidth  int
 	screenHeight int
 
-	quitIsPressed      bool
-	restartIsPressed   bool
-	forwardIsPressed   bool
-	debugIsToggled     bool
-	leftMouseIsPressed bool
+	quitIsPressed    bool
+	restartIsPressed bool
+	forwardIsPressed bool
+	debugIsToggled   bool
 
 	paused bool
 
@@ -142,24 +138,10 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		g.counter++
 	}
 	screen.WritePixels(g.pixels)
-	// g.drawInstructions(screen)
 }
 
 func (g *Game) clearPixels() {
 	for i := range g.pixels {
 		g.pixels[i] = 0
 	}
-}
-
-func (g *Game) drawInstructions(screen *ebiten.Image) {
-	instructions := []string{
-		" P: pause/unpause",
-		" F: play paused sim",
-		" R: restart",
-		" Q: quit",
-	}
-	if g.debugIsToggled {
-		instructions = append([]string{fmt.Sprintf(" TPS: %0.2f\n FPS: %0.2f", ebiten.ActualTPS(), ebiten.ActualFPS())}, instructions...)
-	}
-	ebitenutil.DebugPrint(screen, strings.Join(instructions, "\n"))
 }
