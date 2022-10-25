@@ -28,7 +28,6 @@ type Game struct {
 	screenHeight int
 
 	quitIsPressed    bool
-	restartIsPressed bool
 	forwardIsPressed bool
 	reverseIsPressed bool
 	debugIsToggled   bool
@@ -66,10 +65,6 @@ func (g *Game) getWindowSize() (int, int) {
 // Layout implements ebiten.Game's Layout.
 func (g *Game) Layout(outsideWidth, outsideHeight int) (screenWidth, screenHeight int) {
 	return g.screenWidth, g.screenHeight
-}
-
-func (g *Game) restart() {
-	g.pixels = make([]byte, screenWidth*screenHeight*4)
 }
 
 // Update updates the current game state.
