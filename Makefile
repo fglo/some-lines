@@ -1,8 +1,8 @@
 GOCMD=go
 GOTEST=$(GOCMD) test
 GOVET=$(GOCMD) vet
-BINARY_NAME=particlelifesim
-PATH_TO_MAIN_GO=cmd/particlelifesim/main.go
+BINARY_NAME=somelines
+PATH_TO_MAIN_GO=cmd/somelines/main.go
 VERSION?=0.0.0
 EXPORT_RESULT?=false # for CI please set EXPORT_RESULT to true
 
@@ -18,7 +18,7 @@ all: help
 
 ## Build:
 run: ## Run project
-	go run cmd/particlelifesim/main.go
+	go run cmd/somelines/main.go
 
 build: ## Build your project and put the output binary in out/bin/
 	mkdir -p out/bin
@@ -33,10 +33,10 @@ vendor: ## Copy of all packages needed to support builds and tests in the vendor
 	$(GOCMD) mod vendor
 
 watch: ## Run the code with cosmtrek/air to have automatic reload on changes
-	air  --build.cmd "go build -o out/bin/$(BINARY_NAME) $(PATH_TO_MAIN_GO)" --build.bin "./out/bin/particlelifesim"
+	air  --build.cmd "go build -o out/bin/$(BINARY_NAME) $(PATH_TO_MAIN_GO)" --build.bin "./out/bin/somelines"
 
 wasmserve: ## Run app as webapp
-	wasmserve -tags wasm ./cmd/particlelifesim/
+	wasmserve -tags wasm ./cmd/somelines/
 
 ## Test:
 test: ## Run the tests of the project

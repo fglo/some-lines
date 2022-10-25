@@ -30,23 +30,23 @@ jobs:
 
     - name: Build (Linux)
       run: |
-        go build -o out/bin/particlelifesim-linux cmd/particlelifesim/main.go
+        go build -o out/bin/somelines-linux cmd/somelines/main.go
 
     - name: Build (Wasm)
       run: |
-        GOOS=js GOARCH=wasm go build -tags wasm -o out/bin/particlelifesim.wasm cmd/particlelifesim/main.go
+        GOOS=js GOARCH=wasm go build -tags wasm -o out/bin/somelines.wasm cmd/somelines/main.go
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v3
       with:
-        name: particlelifesim-linux
-        path: out/bin/particlelifesim-linux
+        name: somelines-linux
+        path: out/bin/somelines-linux
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v3
       with:
-        name: particlelifesim-wasm
-        path: out/bin/particlelifesim.wasm
+        name: somelines-wasm
+        path: out/bin/somelines.wasm
 
   build-macos:
     name: Build on macos-latest
@@ -65,13 +65,13 @@ jobs:
 
     - name: Build (macOS)
       run: |
-        go build -o out/bin/particlelifesim-macos.app cmd/particlelifesim/main.go
+        go build -o out/bin/somelines-macos.app cmd/somelines/main.go
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v3
       with:
-        name: particlelifesim-macos
-        path: out/bin/particlelifesim-macos.app
+        name: somelines-macos
+        path: out/bin/somelines-macos.app
 
   build-windows:
     name: Build on windows-latest
@@ -90,13 +90,13 @@ jobs:
 
     - name: Build (Windows)
       run: |
-        go build -o out/bin/particlelifesim-windows.exe cmd/particlelifesim/main.go
+        go build -o out/bin/somelines-windows.exe cmd/somelines/main.go
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v3
       with:
-        name: particlelifesim-windows
-        path: out/bin/particlelifesim-windows.exe
+        name: somelines-windows
+        path: out/bin/somelines-windows.exe
 
   releases:
     name: Release
@@ -123,8 +123,8 @@ jobs:
 
     - name: Zip macos artifact for deployment
       run: |
-        cd ./out/bin/particlelifesim-macos/
-        zip particlelifesim-macos.zip particlelifesim-macos.app
+        cd ./out/bin/somelines-macos/
+        zip somelines-macos.zip somelines-macos.app
       
     - name: Release
       uses: softprops/action-gh-release@v1
@@ -134,9 +134,9 @@ jobs:
         tag_name: ${{ github.ref_name }}
         body: ${{ steps.changelog.outputs.changes }}
         files: |
-          ./out/bin/particlelifesim-linux/particlelifesim-linux
-          ./out/bin/particlelifesim-macos/particlelifesim-macos.zip
-          ./out/bin/particlelifesim-windows/particlelifesim-windows.exe
-          ./out/bin/particlelifesim-wasm/particlelifesim.wasm
+          ./out/bin/somelines-linux/somelines-linux
+          ./out/bin/somelines-macos/somelines-macos.zip
+          ./out/bin/somelines-windows/somelines-windows.exe
+          ./out/bin/somelines-wasm/somelines.wasm
       env:
         GITHUB_TOKEN: ${{ github.token }}

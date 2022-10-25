@@ -35,4 +35,4 @@ go.work
 
 out/bin/*
 tmp/*
-cmd/particlelifesim/tmp/*
+cmd/somelines/tmp/*

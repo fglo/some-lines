@@ -1,9 +1,9 @@
-module github.com/fglo/particles-rules-of-attraction
+module github.com/fglo/some-lines
 
 go 1.19
 
 require (
-	github.com/hajimehoshi/ebiten/v2 v2.4.6
+	github.com/hajimehoshi/ebiten/v2 v2.4.8
 	golang.org/x/exp v0.0.0-20221002003631-540bb7301a08
 )
 
