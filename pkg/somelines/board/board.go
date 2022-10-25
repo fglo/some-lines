@@ -11,10 +11,6 @@ type Board struct {
 	width  int
 	height int
 
-	paused    bool
-	forwarded bool
-	// reversed  bool
-
 	shaded bool
 }
 
@@ -32,7 +28,6 @@ func New(w, h int) *Board {
 
 // Setup prepares board
 func (b *Board) Setup(numberOfCells int) {
-	b.paused = false
 }
 
 // ToggleShading toggles shading
