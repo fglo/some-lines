@@ -5,7 +5,7 @@
 
 Had some fun with rendering lines and rotating coordinates in 2D and 3D.
 
-[you can see it here](https://fglo.github.io/particles-rules-of-attraction/index.html)
+[you can see it live here](https://fglo.github.io/some-lines/index.html)
 
 ## Gif
 
