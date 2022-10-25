@@ -74,7 +74,7 @@ func (g *Game) restart() {
 
 // Update updates the current game state.
 func (g *Game) Update() error {
-	g.checkRestartButton()
+	g.checkShadeButton()
 	g.checkPauseButton()
 	g.checkForwardButton()
 	g.checkReverseButton()
@@ -96,13 +96,9 @@ func (g *Game) checkQuitButton() error {
 	return nil
 }
 
-func (g *Game) checkRestartButton() {
-	if !g.restartIsPressed && inpututil.IsKeyJustPressed(ebiten.KeyR) {
-		g.restartIsPressed = true
-	}
-	if g.restartIsPressed && inpututil.IsKeyJustReleased(ebiten.KeyR) {
-		g.restartIsPressed = false
-		g.restart()
+func (g *Game) checkShadeButton() {
+	if inpututil.IsKeyJustPressed(ebiten.KeyS) {
+		g.board.ToggleShading()
 	}
 }
 
@@ -115,11 +111,9 @@ func (g *Game) checkPauseButton() {
 func (g *Game) checkForwardButton() {
 	if !g.forwardIsPressed && (inpututil.IsKeyJustPressed(ebiten.KeyF) || inpututil.IsKeyJustPressed(ebiten.KeyArrowRight)) {
 		g.forwardIsPressed = true
-		g.board.Forward(true)
 	}
 	if g.forwardIsPressed && (inpututil.IsKeyJustReleased(ebiten.KeyF) || inpututil.IsKeyJustReleased(ebiten.KeyArrowRight)) {
 		g.forwardIsPressed = false
-		g.board.Forward(false)
 	}
 }
 
