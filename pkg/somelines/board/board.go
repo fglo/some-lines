@@ -25,7 +25,7 @@ func New(w, h int) *Board {
 	b.width = w
 	b.height = h
 
-	b.shaded = true
+	b.shaded = false
 
 	return b
 }
@@ -35,19 +35,13 @@ func (b *Board) Setup(numberOfCells int) {
 	b.paused = false
 }
 
-// TogglePause toggles board pause
-func (b *Board) TogglePause() {
-	b.paused = !b.paused
-}
-
-// Forward sets forward
-func (b *Board) Forward(forward bool) {
-	b.forwarded = forward
+// ToggleShading toggles shading
+func (b *Board) ToggleShading() {
+	b.shaded = !b.shaded
 }
 
 // Update performs board updates
 func (b *Board) Update() error {
-
 	return nil
 }
 
