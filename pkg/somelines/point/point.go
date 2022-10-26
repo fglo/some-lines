@@ -15,7 +15,15 @@ func NewPoint2D(x, y int) *Point2D {
 	return p
 }
 
-func (p *Point2D) RotatePoint(pc *Point2D, theta float64) *Point2D {
+func (p *Point2D) AddToX(dx int) *Point2D {
+	return NewPoint2D(p.X+dx, p.Y)
+}
+
+func (p *Point2D) AddToY(dy int) *Point2D {
+	return NewPoint2D(p.X, p.Y+dy)
+}
+
+func (p *Point2D) Rotate(pc *Point2D, theta float64) *Point2D {
 	sinTheta, cosTheta := math.Sincos(theta)
 
 	x := p.X - pc.X
@@ -26,6 +34,10 @@ func (p *Point2D) RotatePoint(pc *Point2D, theta float64) *Point2D {
 
 	pr := NewPoint2D(xr+pc.X, yr+pc.Y)
 	return pr
+}
+
+func (p *Point2D) To3D() *Point3D {
+	return NewPoint3D(p.X, p.Y, 0)
 }
 
 type Point3D struct {
@@ -72,7 +84,7 @@ func (p *Point3D) AddToZ(dz int) *Point3D {
 	return NewPoint3D(p.X, p.Y, p.Z+dz)
 }
 
-func (p *Point3D) RotatePoint3DAroundX(pc *Point3D, theta float64) *Point3D {
+func (p *Point3D) RotateAroundX(pc *Point3D, theta float64) *Point3D {
 	sinTheta, cosTheta := math.Sincos(theta)
 
 	x := p.X
@@ -86,7 +98,7 @@ func (p *Point3D) RotatePoint3DAroundX(pc *Point3D, theta float64) *Point3D {
 	return pr
 }
 
-func (p *Point3D) RotatePoint3DAroundY(pc *Point3D, theta float64) *Point3D {
+func (p *Point3D) RotateAroundY(pc *Point3D, theta float64) *Point3D {
 	sinTheta, cosTheta := math.Sincos(theta)
 
 	x := p.X - pc.X
@@ -100,7 +112,7 @@ func (p *Point3D) RotatePoint3DAroundY(pc *Point3D, theta float64) *Point3D {
 	return pr
 }
 
-func (p *Point3D) RotatePoint3DAroundZ(pc *Point3D, theta float64) *Point3D {
+func (p *Point3D) RotateAroundZ(pc *Point3D, theta float64) *Point3D {
 	sinTheta, cosTheta := math.Sincos(theta)
 
 	x := p.X - pc.X
@@ -112,8 +124,4 @@ func (p *Point3D) RotatePoint3DAroundZ(pc *Point3D, theta float64) *Point3D {
 
 	pr := NewPoint3D(xr+pc.X, yr+pc.Y, z)
 	return pr
-}
-
-func (p *Point3D) RotatePoint3DAroundXAndY(pc *Point3D, theta float64) *Point3D {
-	return p.RotatePoint3DAroundX(pc, theta).RotatePoint3DAroundY(pc, theta)
 }
