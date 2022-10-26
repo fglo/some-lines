@@ -48,7 +48,7 @@ func (b *Board) Size() (w, h int) {
 
 // Draw draws board
 func (b *Board) Draw(pixels []byte, counter, focalLength int) {
-	theta := float64((2*counter)%360) * math.Pi / 180.0
+	theta := float64((int(1.5*float64(counter)))%360) * math.Pi / 180.0
 
 	triangle := shapes.NewTriangle(point.NewPoint2D(30, 30), point.NewPoint2D(60, 25), point.NewPoint2D(70, 50))
 	b.DrawPolygon(triangle.Rotate(theta), pixels)
@@ -78,23 +78,17 @@ func (b *Board) Draw(pixels []byte, counter, focalLength int) {
 	triangle = triangle.MoveAlongY(dy)
 	b.DrawPolygon3D(triangle.RotateAroundZ(theta), focalLength, pixels)
 
-	polygon3d := shapes.NewCube(point.NewPoint3D(140, 20, 0), point.NewPoint3D(170, 50, 30))
-	b.DrawPolygon3D(&polygon3d, focalLength, pixels)
+	cube := shapes.NewCube(point.NewPoint3D(140, 20, 0), point.NewPoint3D(170, 50, 30))
+	b.DrawPolygon3D(&cube, focalLength, pixels)
 
-	polygon3d = *polygon3d.MoveAlongYButPointer(dy)
-	b.DrawPolygon3D(polygon3d.RotateAroundX(-theta), focalLength, pixels)
+	cube = *cube.MoveAlongYButPointer(dy)
+	b.DrawPolygon3D(cube.RotateAroundX(-theta), focalLength, pixels)
 
-	polygon3d = polygon3d.MoveAlongY(dy)
-	b.DrawPolygon3D(polygon3d.RotateAroundY(-theta), focalLength, pixels)
+	cube = cube.MoveAlongY(dy)
+	b.DrawPolygon3D(cube.RotateAroundY(-theta), focalLength, pixels)
 
-	polygon3d = polygon3d.MoveAlongY(dy)
-	b.DrawPolygon3D(polygon3d.RotateAroundZ(-theta), focalLength, pixels)
-}
-
-// Draw2 draws board
-func (b *Board) Draw2(pixels []byte, counter, focalLength int) {
-	theta := float64((int(1.5*float64(counter)))%360) * math.Pi / 180.0
-	_ = theta
+	cube = cube.MoveAlongY(dy)
+	b.DrawPolygon3D(cube.RotateAroundZ(-theta), focalLength, pixels)
 
 	vertices3d := []point.Point3D{
 		point.NewPoint3D(50, 40, 20),

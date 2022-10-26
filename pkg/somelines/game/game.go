@@ -139,7 +139,6 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	}
 	g.clearPixels()
 	g.board.Draw(g.pixels, g.counter, g.focalLength)
-	g.board.Draw2(g.pixels, g.counter, g.focalLength)
 	screen.WritePixels(g.pixels)
 }
 
