@@ -22,7 +22,7 @@ func New(w, h int) *Board {
 	b.width = w
 	b.height = h
 
-	b.shaded = false
+	b.shaded = true
 
 	return b
 }
@@ -97,14 +97,14 @@ func (b *Board) Draw2(pixels []byte, counter, focalLength int) {
 	_ = theta
 
 	vertices3d := []point.Point3D{
-		point.NewPoint3D(50, 40, 0),
-		point.NewPoint3D(130, 40, 0),
-		point.NewPoint3D(60, 100, 0),
-		point.NewPoint3D(120, 100, 0),
-		point.NewPoint3D(70, 40, 60),
-		point.NewPoint3D(150, 40, 60),
-		point.NewPoint3D(60, 100, 60),
-		point.NewPoint3D(120, 100, 60),
+		point.NewPoint3D(50, 40, 20),
+		point.NewPoint3D(130, 40, 20),
+		point.NewPoint3D(60, 100, 20),
+		point.NewPoint3D(120, 100, 20),
+		point.NewPoint3D(70, 40, 80),
+		point.NewPoint3D(150, 40, 80),
+		point.NewPoint3D(60, 100, 80),
+		point.NewPoint3D(120, 100, 80),
 	}
 	edges3d := [][2]int{
 		{0, 1}, {0, 2}, {0, 4},
@@ -114,7 +114,11 @@ func (b *Board) Draw2(pixels []byte, counter, focalLength int) {
 	}
 
 	polygon3d := shapes.NewPolygon3D(vertices3d, edges3d)
-	b.DrawPolygon3D(polygon3d.RotateAroundX(-theta).RotateAroundY(-theta), focalLength, pixels)
+
+	d := 20
+	dt := d + counter%b.width
+	ds := int(float64(d) * math.Sin(theta))
+	b.DrawPolygon3D(polygon3d.MoveAlongXButPointer(dt).MoveAlongYButPointer(ds).RotateAroundX(-theta).RotateAroundY(-theta), focalLength, pixels)
 }
 
 // DrawPolygon draws a polygon based on vertices and edges matrices
