@@ -16,11 +16,11 @@ func (p *Point2D) Clone() Point2D {
 	return *p
 }
 
-func (p *Point2D) AddToX(dx int) Point2D {
+func (p *Point2D) MoveAlongX(dx int) Point2D {
 	return Point2D{p.X + dx, p.Y}
 }
 
-func (p *Point2D) AddToY(dy int) Point2D {
+func (p *Point2D) MoveAlongY(dy int) Point2D {
 	return Point2D{p.X, p.Y + dy}
 }
 
@@ -72,16 +72,28 @@ func (p *Point3D) To2DRelativeToPoint(pc Point2D, focalLength int) Point2D {
 	return Point2D{xp + pc.X, yp + pc.Y}
 }
 
-func (p *Point3D) AddToX(dx int) Point3D {
+func (p *Point3D) MoveAlongX(dx int) Point3D {
 	return Point3D{p.X + dx, p.Y, p.Z}
 }
 
-func (p *Point3D) AddToY(dy int) Point3D {
+func (p *Point3D) MoveAlongY(dy int) Point3D {
 	return Point3D{p.X, p.Y + dy, p.Z}
 }
 
-func (p *Point3D) AddToZ(dz int) Point3D {
+func (p *Point3D) MoveAlongZ(dz int) Point3D {
 	return Point3D{p.X, p.Y, p.Z + dz}
+}
+
+func (p *Point3D) MoveAlongXButPointer(dx int) *Point3D {
+	return &Point3D{p.X + dx, p.Y, p.Z}
+}
+
+func (p *Point3D) MoveAlongYButPointer(dy int) *Point3D {
+	return &Point3D{p.X, p.Y + dy, p.Z}
+}
+
+func (p *Point3D) MoveAlongZButPointer(dz int) *Point3D {
+	return &Point3D{p.X, p.Y, p.Z + dz}
 }
 
 func (p *Point3D) RotateAroundX(pc Point3D, theta float64) Point3D {

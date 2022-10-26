@@ -69,74 +69,25 @@ func (b *Board) Draw(pixels []byte, counter, focalLength int) {
 	triangle = shapes.NewTriangle(p1, p2, p3)
 	b.DrawPolygon(&triangle, pixels)
 
-	triangle = shapes.NewTriangle(p1.AddToY(dy), p2.AddToY(dy), p3.AddToY(dy))
+	triangle = triangle.MoveAlongY(dy)
 	b.DrawPolygon3D(triangle.RotateAroundX(theta), focalLength, pixels)
 
-	triangle = shapes.NewTriangle(p1.AddToY(dy*2), p2.AddToY(dy*2), p3.AddToY(dy*2))
+	triangle = triangle.MoveAlongY(dy)
 	b.DrawPolygon3D(triangle.RotateAroundY(theta), focalLength, pixels)
 
-	triangle = shapes.NewTriangle(p1.AddToY(dy*3), p2.AddToY(dy*3), p3.AddToY(dy*3))
+	triangle = triangle.MoveAlongY(dy)
 	b.DrawPolygon3D(triangle.RotateAroundZ(theta), focalLength, pixels)
 
-	vertices3d := []point.Point3D{
-		point.NewPoint3D(140, 20, 0),
-		point.NewPoint3D(170, 20, 0),
-		point.NewPoint3D(140, 50, 0),
-		point.NewPoint3D(170, 50, 0),
-		point.NewPoint3D(140, 20, 30),
-		point.NewPoint3D(170, 20, 30),
-		point.NewPoint3D(140, 50, 30),
-		point.NewPoint3D(170, 50, 30),
-	}
-	edges3d := [][2]int{
-		{0, 1}, {0, 2}, {0, 4},
-		{3, 1}, {3, 2}, {3, 7},
-		{5, 1}, {5, 4}, {5, 7},
-		{6, 2}, {6, 4}, {6, 7},
-	}
-
-	// dy := 40
-	vertices3d2 := []point.Point3D{
-		vertices3d[0].AddToY(dy),
-		vertices3d[1].AddToY(dy),
-		vertices3d[2].AddToY(dy),
-		vertices3d[3].AddToY(dy),
-		vertices3d[4].AddToY(dy),
-		vertices3d[5].AddToY(dy),
-		vertices3d[6].AddToY(dy),
-		vertices3d[7].AddToY(dy),
-	}
-	vertices3d3 := []point.Point3D{
-		vertices3d2[0].AddToY(dy),
-		vertices3d2[1].AddToY(dy),
-		vertices3d2[2].AddToY(dy),
-		vertices3d2[3].AddToY(dy),
-		vertices3d2[4].AddToY(dy),
-		vertices3d2[5].AddToY(dy),
-		vertices3d2[6].AddToY(dy),
-		vertices3d2[7].AddToY(dy),
-	}
-	vertices3d4 := []point.Point3D{
-		vertices3d3[0].AddToY(dy),
-		vertices3d3[1].AddToY(dy),
-		vertices3d3[2].AddToY(dy),
-		vertices3d3[3].AddToY(dy),
-		vertices3d3[4].AddToY(dy),
-		vertices3d3[5].AddToY(dy),
-		vertices3d3[6].AddToY(dy),
-		vertices3d3[7].AddToY(dy),
-	}
-
-	polygon3d := shapes.NewPolygon3D(vertices3d, edges3d)
+	polygon3d := shapes.NewCube(point.NewPoint3D(140, 20, 0), point.NewPoint3D(170, 50, 30))
 	b.DrawPolygon3D(&polygon3d, focalLength, pixels)
 
-	polygon3d = shapes.NewPolygon3D(vertices3d2, edges3d)
+	polygon3d = *polygon3d.MoveAlongYButPointer(dy)
 	b.DrawPolygon3D(polygon3d.RotateAroundX(-theta), focalLength, pixels)
 
-	polygon3d = shapes.NewPolygon3D(vertices3d3, edges3d)
+	polygon3d = polygon3d.MoveAlongY(dy)
 	b.DrawPolygon3D(polygon3d.RotateAroundY(-theta), focalLength, pixels)
 
-	polygon3d = shapes.NewPolygon3D(vertices3d4, edges3d)
+	polygon3d = polygon3d.MoveAlongY(dy)
 	b.DrawPolygon3D(polygon3d.RotateAroundZ(-theta), focalLength, pixels)
 }
 

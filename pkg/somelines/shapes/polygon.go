@@ -12,6 +12,38 @@ func NewPolygon2D(vertices []point.Point2D, edges [][2]int) Polygon2D {
 	return p
 }
 
+func (p *Polygon2D) MoveAlongX(dx int) Polygon2D {
+	p2 := *p
+	vertices := make([]point.Point2D, 0)
+	for _, v := range p2.Vertices {
+		v.X += dx
+		vertices = append(vertices, v)
+	}
+	p2.Vertices = vertices
+	return p2
+}
+
+func (p *Polygon2D) MoveAlongY(dy int) Polygon2D {
+	p2 := *p
+	vertices := make([]point.Point2D, 0)
+	for _, v := range p2.Vertices {
+		v.Y += dy
+		vertices = append(vertices, v)
+	}
+	p2.Vertices = vertices
+	return p2
+}
+
+func (p *Polygon2D) MoveAlongXButPointer(dx int) *Polygon2D {
+	p2 := p.MoveAlongX(dx)
+	return &p2
+}
+
+func (p *Polygon2D) MoveAlongYButPointer(dy int) *Polygon2D {
+	p2 := p.MoveAlongY(dy)
+	return &p2
+}
+
 // Rotate rotates a polygon
 func (p *Polygon2D) Rotate(theta float64) *Polygon2D {
 	pc := p.CalculateCenterPoint()
@@ -87,6 +119,54 @@ type Polygon3D struct {
 func NewPolygon3D(vertices []point.Point3D, edges [][2]int) Polygon3D {
 	p := Polygon3D{Vertices: vertices, Edges: edges}
 	return p
+}
+
+func (p *Polygon3D) MoveAlongX(dx int) Polygon3D {
+	p2 := *p
+	vertices := make([]point.Point3D, 0)
+	for _, v := range p2.Vertices {
+		v.X += dx
+		vertices = append(vertices, v)
+	}
+	p2.Vertices = vertices
+	return p2
+}
+
+func (p *Polygon3D) MoveAlongY(dy int) Polygon3D {
+	p2 := *p
+	vertices := make([]point.Point3D, 0)
+	for _, v := range p2.Vertices {
+		v.Y += dy
+		vertices = append(vertices, v)
+	}
+	p2.Vertices = vertices
+	return p2
+}
+
+func (p *Polygon3D) MoveAlongZ(dz int) Polygon3D {
+	p2 := *p
+	vertices := make([]point.Point3D, 0)
+	for _, v := range p2.Vertices {
+		v.Z += dz
+		vertices = append(vertices, v)
+	}
+	p2.Vertices = vertices
+	return p2
+}
+
+func (p *Polygon3D) MoveAlongXButPointer(dx int) *Polygon3D {
+	p2 := p.MoveAlongX(dx)
+	return &p2
+}
+
+func (p *Polygon3D) MoveAlongYButPointer(dy int) *Polygon3D {
+	p2 := p.MoveAlongY(dy)
+	return &p2
+}
+
+func (p *Polygon3D) MoveAlongZButPointer(dz int) *Polygon3D {
+	p2 := p.MoveAlongZ(dz)
+	return &p2
 }
 
 // RotateAroundX rotates a polygon around X axis
