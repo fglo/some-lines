@@ -4,6 +4,6 @@
 package game
 
 const (
-	screenWidth  = 200
-	screenHeight = 200
+	screenWidth  = 300
+	screenHeight = 300
 )

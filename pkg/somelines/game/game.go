@@ -2,6 +2,7 @@ package game
 
 import (
 	"errors"
+	"fmt"
 	"math/rand"
 	"time"
 
@@ -74,6 +75,8 @@ func (g *Game) Update() error {
 	g.checkForwardButton()
 	g.checkReverseButton()
 	g.checkDebugButton()
+	g.checkPlusButton()
+	g.checkMinusButton()
 	if err := g.board.Update(); err != nil {
 		return err
 	}
@@ -127,6 +130,26 @@ func (g *Game) checkDebugButton() {
 	}
 }
 
+func (g *Game) checkPlusButton() {
+	if inpututil.IsKeyJustPressed(ebiten.KeyUp) {
+		g.focalLength += 5
+		if g.focalLength > 200 {
+			g.focalLength = 200
+		}
+		fmt.Println(g.focalLength)
+	}
+}
+
+func (g *Game) checkMinusButton() {
+	if inpututil.IsKeyJustPressed(ebiten.KeyDown) {
+		g.focalLength -= 5
+		if g.focalLength < 40 {
+			g.focalLength = 40
+		}
+		fmt.Println(g.focalLength)
+	}
+}
+
 // Draw draws the current game to the given screen.
 func (g *Game) Draw(screen *ebiten.Image) {
 	if g.pixels == nil {
@@ -138,7 +161,9 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		g.counter--
 	}
 	g.clearPixels()
-	g.board.Draw(g.pixels, g.counter, g.focalLength)
+	// g.board.Draw(g.pixels, g.counter, g.focalLength)
+	g.board.DrawScene(g.pixels, g.counter, g.focalLength)
+	// g.board.DrawTeapot(g.pixels, g.counter, g.focalLength)
 	screen.WritePixels(g.pixels)
 }
 
