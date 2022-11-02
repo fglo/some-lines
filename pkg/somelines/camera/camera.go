@@ -28,5 +28,5 @@ func New(position point.Point3D, orientation point.Orientation) Camera {
 
 func (c *Camera) SetFoV(fov float64) {
 	fov = math.Mod(fov, 360)
-	c.Vw = int(2.0 * float64(c.FocalLength) * math.Tan(fov*0.5*math.Pi/180.0))
+	c.Vw = int(2.0 * float64(c.FocalLength) * math.Tan(fov*math.Pi/180.0) * 0.5)
 }

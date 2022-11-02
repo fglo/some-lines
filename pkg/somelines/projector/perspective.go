@@ -7,44 +7,34 @@ import (
 )
 
 type PerspectiveProjector struct {
-	Camera camera.Camera
 }
 
-func NewPerspectiveProjector() PerspectiveProjector {
+func NewPerspectiveProjector() Projector {
 	pp := PerspectiveProjector{}
-	return pp
+	return &pp
 }
 
-func (pp *PerspectiveProjector) SetCamera(c camera.Camera) {
-	pp.Camera = c
-}
-
-func (pp *PerspectiveProjector) ProjectPolygon(p shapes.Polygon3D) shapes.Polygon2D {
-	vs2d := make([]point.Point2D, 0)
-	for _, v := range p.Vertices {
-		vs2d = append(vs2d, pp.ProjectPoint(v))
+func (pp *PerspectiveProjector) ProjectPolygon(polygon shapes.Polygon3D, c *camera.Camera) shapes.ProjectedPolygon3D {
+	vs := make([]point.ProjectedPoint3D, 0)
+	for _, v := range polygon.Vertices {
+		vs = append(vs, pp.projectPoint(v, c))
 	}
-	return shapes.NewPolygon2D(vs2d, p.Edges)
+	return shapes.NewProjectedPolygon3D(vs, polygon.Edges)
 }
 
-// func (pp *PerspectiveProjector) ProjectLine(l shapes.Line3D) shapes.Line {
+func (pp *PerspectiveProjector) projectPoint(point3d point.Point3D, c *camera.Camera) point.ProjectedPoint3D {
+	ac := point.NewPoint3D(point3d.X-c.Position.X, point3d.Y-c.Position.Y, point3d.Z-c.Position.Z)
+	d := ac.RotateAroundX(c.Orientation.X).RotateAroundY(c.Orientation.Y).RotateAroundZ(c.Orientation.Z)
 
-// }
-
-func (pp *PerspectiveProjector) ProjectPoint(p point.Point3D) point.Point2D {
-	ac := point.NewPoint3D(p.X-pp.Camera.Position.X, p.Y-pp.Camera.Position.Y, p.Z-pp.Camera.Position.Z)
-	d := ac.RotateAroundX(pp.Camera.Orientation.X).RotateAroundY(pp.Camera.Orientation.Y).RotateAroundZ(pp.Camera.Orientation.Z)
-
-	x := d.X * pp.Camera.FocalLength
-	y := d.Y * pp.Camera.FocalLength
+	x := d.X * c.FocalLength
+	y := d.Y * c.FocalLength
 	if d.Z != 0 {
 		x /= d.Z
 		y /= d.Z
 	}
 
-	x = x * 300 / pp.Camera.Vw
-	y = y * 300 / pp.Camera.Vh
+	x = x * 300 / c.Vw
+	y = y * 300 / c.Vh
 
-	return point.NewPoint2D(x+pp.Camera.Position.X, y+pp.Camera.Position.Y)
-	// return point.NewPoint2D(x+pp.Camera.Position.X, y+pp.Camera.Position.Y)
+	return point.NewProjectedPoint3D(x+c.Position.X, y+c.Position.Y, float64(d.Z))
 }

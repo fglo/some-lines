@@ -178,14 +178,14 @@ func (p *Point3D) RotateAroundZRelativeToPoint(pc Point3D, theta float64) Point3
 	return Point3D{xr + pc.X, yr + pc.Y, z}
 }
 
-type Point2DWithDepth struct {
+type ProjectedPoint3D struct {
 	X int
 	Y int
 	D float64
 }
 
-func NewPointPoint2DWithDepth(x, y int, d float64) Point2DWithDepth {
-	p := Point2DWithDepth{X: x, Y: y, D: d}
+func NewProjectedPoint3D(x, y int, d float64) ProjectedPoint3D {
+	p := ProjectedPoint3D{X: x, Y: y, D: d}
 	return p
 }
 

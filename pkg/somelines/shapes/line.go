@@ -1,6 +1,9 @@
 package shapes
 
-import "github.com/fglo/some-lines/pkg/somelines/point"
+import (
+	"github.com/fglo/some-lines/pkg/somelines/camera"
+	"github.com/fglo/some-lines/pkg/somelines/point"
+)
 
 type Line struct {
 	P1 point.Point2D
@@ -81,14 +84,109 @@ func NewLine3D(p1, p2 point.Point3D) Line3D {
 	return Line3D{P1: p1, P2: p2}
 }
 
-func (l *Line3D) PlotLine(pc point.Point2D, focalLength int) []point.Point2DWithDepth {
+func PlotLine(startPoint, endPoint point.ProjectedPoint3D, c camera.Camera) []point.ProjectedPoint3D {
 	var (
 		dx, sx        int
 		dy, sy        int
 		dz            int
 		depth, sdepth float64
 		ps, pe        point.Point2D
-		coordinates   []point.Point2DWithDepth
+		coordinates   []point.ProjectedPoint3D
+	)
+
+	if startPoint.D < endPoint.D {
+		ps = point.NewPoint2D(startPoint.X, startPoint.Y)
+		pe = point.NewPoint2D(endPoint.X, endPoint.Y)
+		dz = int(endPoint.D - startPoint.D)
+	} else {
+		ps = point.NewPoint2D(endPoint.X, endPoint.Y)
+		pe = point.NewPoint2D(startPoint.X, startPoint.Y)
+		dz = int(startPoint.D - endPoint.D)
+	}
+
+	if ps.X < pe.X {
+		sx = 1
+		dx = pe.X - ps.X
+	} else {
+		sx = -1
+		dx = ps.X - pe.X
+	}
+
+	if ps.Y < pe.Y {
+		sy = 1
+		dy = pe.Y - ps.Y
+	} else {
+		sy = -1
+		dy = ps.Y - pe.Y
+	}
+
+	switch {
+	case dx > dy:
+		ai := (dy - dx) * 2
+		bi := dy * 2
+		d := bi - dx
+		depth = startPoint.D
+		if startPoint.D == endPoint.D {
+			sdepth = 0
+		} else if dy == 0 {
+			sdepth = float64(dz)
+		} else {
+			sdepth = float64(dz) / float64(dy)
+		}
+
+		coordinates = append(coordinates, point.NewProjectedPoint3D(ps.X, ps.Y, depth))
+		for ps.X != pe.X {
+			if d >= 0 {
+				ps.Y += sy
+				d += ai
+			} else {
+				d += bi
+			}
+			ps.X += sx
+			if (sdepth > 0 && depth <= endPoint.D) || (sdepth < 0 && depth >= endPoint.D) {
+				depth += sdepth
+			}
+			coordinates = append(coordinates, point.NewProjectedPoint3D(ps.X, ps.Y, depth))
+		}
+	case dx <= dy:
+		ai := (dx - dy) * 2
+		bi := dx * 2
+		d := bi - dy
+		depth = startPoint.D
+		if startPoint.D == endPoint.D {
+			sdepth = 0
+		} else if dx == 0 {
+			sdepth = float64(dz)
+		} else {
+			sdepth = float64(dz) / float64(dx)
+		}
+		coordinates = append(coordinates, point.NewProjectedPoint3D(ps.X, ps.Y, depth))
+		for ps.Y != pe.Y {
+			if d >= 0 {
+				ps.X += sx
+				d += ai
+			} else {
+				d += bi
+			}
+			ps.Y += sy
+			if (sdepth > 0 && depth <= endPoint.D) || (sdepth < 0 && depth >= endPoint.D) {
+				depth += sdepth
+			}
+			coordinates = append(coordinates, point.NewProjectedPoint3D(ps.X, ps.Y, depth))
+		}
+	}
+
+	return coordinates
+}
+
+func (l *Line3D) PlotLine(pc point.Point2D, focalLength int) []point.ProjectedPoint3D {
+	var (
+		dx, sx        int
+		dy, sy        int
+		dz            int
+		depth, sdepth float64
+		ps, pe        point.Point2D
+		coordinates   []point.ProjectedPoint3D
 	)
 
 	if l.P1.Z > l.P2.Z {
@@ -131,7 +229,7 @@ func (l *Line3D) PlotLine(pc point.Point2D, focalLength int) []point.Point2DWith
 			sdepth = float64(dz) / float64(dy)
 		}
 
-		coordinates = append(coordinates, point.NewPointPoint2DWithDepth(ps.X, ps.Y, depth))
+		coordinates = append(coordinates, point.NewProjectedPoint3D(ps.X, ps.Y, depth))
 		for ps.X != pe.X {
 			if d >= 0 {
 				ps.Y += sy
@@ -143,7 +241,7 @@ func (l *Line3D) PlotLine(pc point.Point2D, focalLength int) []point.Point2DWith
 			if (sdepth > 0 && depth <= float64(l.P2.Z)) || (sdepth < 0 && depth >= float64(l.P2.Z)) {
 				depth += sdepth
 			}
-			coordinates = append(coordinates, point.NewPointPoint2DWithDepth(ps.X, ps.Y, depth))
+			coordinates = append(coordinates, point.NewProjectedPoint3D(ps.X, ps.Y, depth))
 		}
 	case dx <= dy:
 		ai := (dx - dy) * 2
@@ -157,7 +255,7 @@ func (l *Line3D) PlotLine(pc point.Point2D, focalLength int) []point.Point2DWith
 		} else {
 			sdepth = float64(dz) / float64(dx)
 		}
-		coordinates = append(coordinates, point.NewPointPoint2DWithDepth(ps.X, ps.Y, depth))
+		coordinates = append(coordinates, point.NewProjectedPoint3D(ps.X, ps.Y, depth))
 		for ps.Y != pe.Y {
 			if d >= 0 {
 				ps.X += sx
@@ -169,21 +267,21 @@ func (l *Line3D) PlotLine(pc point.Point2D, focalLength int) []point.Point2DWith
 			if (sdepth > 0 && depth <= float64(l.P2.Z)) || (sdepth < 0 && depth >= float64(l.P2.Z)) {
 				depth += sdepth
 			}
-			coordinates = append(coordinates, point.NewPointPoint2DWithDepth(ps.X, ps.Y, depth))
+			coordinates = append(coordinates, point.NewProjectedPoint3D(ps.X, ps.Y, depth))
 		}
 	}
 
 	return coordinates
 }
 
-func (l *Line3D) PlotProjectedLine(cameraPosition point.Point3D, cameraOrientation point.Orientation) []point.Point2DWithDepth {
+func (l *Line3D) PlotProjectedLine(cameraPosition point.Point3D, cameraOrientation point.Orientation) []point.ProjectedPoint3D {
 	var (
 		dx, sx        int
 		dy, sy        int
 		dz            int
 		depth, sdepth float64
 		ps, pe        point.Point2D
-		coordinates   []point.Point2DWithDepth
+		coordinates   []point.ProjectedPoint3D
 	)
 
 	if l.P1.Z > l.P2.Z {
@@ -226,7 +324,7 @@ func (l *Line3D) PlotProjectedLine(cameraPosition point.Point3D, cameraOrientati
 			sdepth = float64(dz) / float64(dy)
 		}
 
-		coordinates = append(coordinates, point.NewPointPoint2DWithDepth(ps.X, ps.Y, depth))
+		coordinates = append(coordinates, point.NewProjectedPoint3D(ps.X, ps.Y, depth))
 		for ps.X != pe.X {
 			if d >= 0 {
 				ps.Y += sy
@@ -238,7 +336,7 @@ func (l *Line3D) PlotProjectedLine(cameraPosition point.Point3D, cameraOrientati
 			if (sdepth > 0 && depth <= float64(l.P2.Z)) || (sdepth < 0 && depth >= float64(l.P2.Z)) {
 				depth += sdepth
 			}
-			coordinates = append(coordinates, point.NewPointPoint2DWithDepth(ps.X, ps.Y, depth))
+			coordinates = append(coordinates, point.NewProjectedPoint3D(ps.X, ps.Y, depth))
 		}
 	case dx <= dy:
 		ai := (dx - dy) * 2
@@ -252,7 +350,7 @@ func (l *Line3D) PlotProjectedLine(cameraPosition point.Point3D, cameraOrientati
 		} else {
 			sdepth = float64(dz) / float64(dx)
 		}
-		coordinates = append(coordinates, point.NewPointPoint2DWithDepth(ps.X, ps.Y, depth))
+		coordinates = append(coordinates, point.NewProjectedPoint3D(ps.X, ps.Y, depth))
 		for ps.Y != pe.Y {
 			if d >= 0 {
 				ps.X += sx
@@ -264,7 +362,7 @@ func (l *Line3D) PlotProjectedLine(cameraPosition point.Point3D, cameraOrientati
 			if (sdepth > 0 && depth <= float64(l.P2.Z)) || (sdepth < 0 && depth >= float64(l.P2.Z)) {
 				depth += sdepth
 			}
-			coordinates = append(coordinates, point.NewPointPoint2DWithDepth(ps.X, ps.Y, depth))
+			coordinates = append(coordinates, point.NewProjectedPoint3D(ps.X, ps.Y, depth))
 		}
 	}
 

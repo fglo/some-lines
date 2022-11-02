@@ -251,3 +251,13 @@ func (p *Polygon3D) CalculateFlatCenterPoint() point.Point2D {
 	pc := point.NewPoint2D(sumX/lv, sumY/lv)
 	return pc
 }
+
+type ProjectedPolygon3D struct {
+	Vertices []point.ProjectedPoint3D
+	Edges    [][2]int
+}
+
+func NewProjectedPolygon3D(vertices []point.ProjectedPoint3D, edges [][2]int) ProjectedPolygon3D {
+	p := ProjectedPolygon3D{Vertices: vertices, Edges: edges}
+	return p
+}

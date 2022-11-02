@@ -6,6 +6,8 @@ import (
 	"github.com/fglo/some-lines/pkg/somelines/camera"
 	"github.com/fglo/some-lines/pkg/somelines/point"
 	"github.com/fglo/some-lines/pkg/somelines/projector"
+	"github.com/fglo/some-lines/pkg/somelines/renderer"
+	"github.com/fglo/some-lines/pkg/somelines/scene"
 	"github.com/fglo/some-lines/pkg/somelines/shapes"
 )
 
@@ -49,73 +51,73 @@ func (b *Board) Size() (w, h int) {
 }
 
 // Draw draws board
-func (b *Board) Draw(pixels []byte, counter, focalLength int) {
-	theta := float64((int(1.5*float64(counter)))%360) * math.Pi / 180.0
+// func (b *Board) Draw(pixels []byte, counter, focalLength int) {
+// 	theta := float64((int(1.5*float64(counter)))%360) * math.Pi / 180.0
 
-	triangle := shapes.NewTriangle(point.NewPoint2D(30, 30), point.NewPoint2D(60, 25), point.NewPoint2D(70, 50))
-	b.DrawPolygon(triangle.Rotate(theta), pixels)
+// 	triangle := shapes.NewTriangle(point.NewPoint2D(30, 30), point.NewPoint2D(60, 25), point.NewPoint2D(70, 50))
+// 	b.DrawPolygon(triangle.Rotate(theta), pixels)
 
-	quadrangle := shapes.NewQuadrangle(point.NewPoint2D(30, 70), point.NewPoint2D(60, 65), point.NewPoint2D(70, 90), point.NewPoint2D(40, 90))
-	b.DrawPolygon(quadrangle.Rotate(-theta), pixels)
+// 	quadrangle := shapes.NewQuadrangle(point.NewPoint2D(30, 70), point.NewPoint2D(60, 65), point.NewPoint2D(70, 90), point.NewPoint2D(40, 90))
+// 	b.DrawPolygon(quadrangle.Rotate(-theta), pixels)
 
-	line := shapes.NewLine(point.NewPoint2D(30, 120), point.NewPoint2D(70, 130))
-	b.DrawLine(line, pixels)
-	b.DrawLine3DRelativeToPoint(point.NewPoint3D(30, 140, 0), point.NewPoint3D(70, 150, 20), point.NewPoint2D(30, 140), focalLength, pixels)
-	b.DrawLine3DRelativeToPoint(point.NewPoint3D(30, 160, 10), point.NewPoint3D(70, 175, 20), point.NewPoint2D(55, 160), focalLength, pixels)
+// 	line := shapes.NewLine(point.NewPoint2D(30, 120), point.NewPoint2D(70, 130))
+// 	b.DrawLine(line, pixels)
+// 	b.DrawLine3DRelativeToPoint(point.NewPoint3D(30, 140, 0), point.NewPoint3D(70, 150, 20), point.NewPoint2D(30, 140), focalLength, pixels)
+// 	b.DrawLine3DRelativeToPoint(point.NewPoint3D(30, 160, 10), point.NewPoint3D(70, 175, 20), point.NewPoint2D(55, 160), focalLength, pixels)
 
-	dy := 40
-	p1 := point.NewPoint2D(80, 20)
-	p2 := point.NewPoint2D(100, 40)
-	p3 := point.NewPoint2D(120, 20)
+// 	dy := 40
+// 	p1 := point.NewPoint2D(80, 20)
+// 	p2 := point.NewPoint2D(100, 40)
+// 	p3 := point.NewPoint2D(120, 20)
 
-	triangle = shapes.NewTriangle(p1, p2, p3)
-	b.DrawPolygon(&triangle, pixels)
+// 	triangle = shapes.NewTriangle(p1, p2, p3)
+// 	b.DrawPolygon(&triangle, pixels)
 
-	triangle = triangle.MoveAlongY(dy)
-	b.DrawPolygon3D(triangle.RotateAroundX(theta), focalLength, pixels)
+// 	triangle = triangle.MoveAlongY(dy)
+// 	b.DrawPolygon3D(triangle.RotateAroundX(theta), focalLength, pixels)
 
-	triangle = triangle.MoveAlongY(dy)
-	b.DrawPolygon3D(triangle.RotateAroundY(theta), focalLength, pixels)
+// 	triangle = triangle.MoveAlongY(dy)
+// 	b.DrawPolygon3D(triangle.RotateAroundY(theta), focalLength, pixels)
 
-	triangle = triangle.MoveAlongY(dy)
-	b.DrawPolygon3D(triangle.RotateAroundZ(theta), focalLength, pixels)
+// 	triangle = triangle.MoveAlongY(dy)
+// 	b.DrawPolygon3D(triangle.RotateAroundZ(theta), focalLength, pixels)
 
-	cube := shapes.NewCube(point.NewPoint3D(140, 20, 0), point.NewPoint3D(170, 50, 30))
-	b.DrawPolygon3D(&cube, focalLength, pixels)
+// 	cube := shapes.NewCube(point.NewPoint3D(140, 20, 0), point.NewPoint3D(170, 50, 30))
+// 	b.DrawPolygon3D(&cube, focalLength, pixels)
 
-	cube = *cube.MoveAlongYButPointer(dy)
-	b.DrawPolygon3D(cube.RotateAroundX(-theta), focalLength, pixels)
+// 	cube = *cube.MoveAlongYButPointer(dy)
+// 	b.DrawPolygon3D(cube.RotateAroundX(-theta), focalLength, pixels)
 
-	cube = cube.MoveAlongY(dy)
-	b.DrawPolygon3D(cube.RotateAroundY(-theta), focalLength, pixels)
+// 	cube = cube.MoveAlongY(dy)
+// 	b.DrawPolygon3D(cube.RotateAroundY(-theta), focalLength, pixels)
 
-	cube = cube.MoveAlongY(dy)
-	b.DrawPolygon3D(cube.RotateAroundZ(-theta), focalLength, pixels)
+// 	cube = cube.MoveAlongY(dy)
+// 	b.DrawPolygon3D(cube.RotateAroundZ(-theta), focalLength, pixels)
 
-	vertices3d := []point.Point3D{
-		point.NewPoint3D(50, 40, 20),
-		point.NewPoint3D(130, 40, 20),
-		point.NewPoint3D(60, 100, 20),
-		point.NewPoint3D(120, 100, 20),
-		point.NewPoint3D(70, 40, 80),
-		point.NewPoint3D(150, 40, 80),
-		point.NewPoint3D(60, 100, 80),
-		point.NewPoint3D(120, 100, 80),
-	}
-	edges3d := [][2]int{
-		{0, 1}, {0, 2}, {0, 4},
-		{3, 1}, {3, 2}, {3, 7},
-		{5, 1}, {5, 4}, {5, 7},
-		{6, 2}, {6, 4}, {6, 7},
-	}
+// 	vertices3d := []point.Point3D{
+// 		point.NewPoint3D(50, 40, 20),
+// 		point.NewPoint3D(130, 40, 20),
+// 		point.NewPoint3D(60, 100, 20),
+// 		point.NewPoint3D(120, 100, 20),
+// 		point.NewPoint3D(70, 40, 80),
+// 		point.NewPoint3D(150, 40, 80),
+// 		point.NewPoint3D(60, 100, 80),
+// 		point.NewPoint3D(120, 100, 80),
+// 	}
+// 	edges3d := [][2]int{
+// 		{0, 1}, {0, 2}, {0, 4},
+// 		{3, 1}, {3, 2}, {3, 7},
+// 		{5, 1}, {5, 4}, {5, 7},
+// 		{6, 2}, {6, 4}, {6, 7},
+// 	}
 
-	polygon3d := shapes.NewPolygon3D(vertices3d, edges3d)
+// 	polygon3d := shapes.NewPolygon3D(vertices3d, edges3d)
 
-	d := 30
-	dt := d + counter%b.width
-	ds := int(float64(d) * math.Sin(theta))
-	b.DrawPolygon3D(polygon3d.MoveAlongXButPointer(dt).MoveAlongZButPointer(ds).RotateAroundX(-theta).RotateAroundY(-theta), focalLength, pixels)
-}
+// 	d := 30
+// 	dt := d + counter%b.width
+// 	ds := int(float64(d) * math.Sin(theta))
+// 	b.DrawPolygon3D(polygon3d.MoveAlongXButPointer(dt).MoveAlongZButPointer(ds).RotateAroundX(-theta).RotateAroundY(-theta), focalLength, pixels)
+// }
 
 func (b *Board) DrawScene(pixels []byte, counter, focalLength int) {
 	theta := float64(counter%360) * math.Pi / 180.0
@@ -128,30 +130,109 @@ func (b *Board) DrawScene(pixels []byte, counter, focalLength int) {
 	_ = dc
 
 	dthetax := (15 * (math.Sin(theta) + 1)) * math.Pi / 180.0
+	_ = dthetax
 	dy := int(-80 * (math.Sin(theta) + 1))
+	_ = dy
 
 	cameraPosition := point.NewPoint3D(b.width/2, b.height/2, 0)
-	cameraPosition = cameraPosition.MoveAlongYButPointer(dy).MoveAlongZ(ds)
-	// cameraPosition = cameraPosition.MoveAlongXButPointer(ds).MoveAlongY(dc)
-	// cameraPosition = cameraPosition.MoveAlongZButPointer(ds).MoveAlongXButPointer(ds).MoveAlongY(dc)
-	cameraOrientation := point.NewOrientation(dthetax, 0, 0)
+	cameraOrientation := point.NewOrientation(1*math.Pi/180.0, 0, 0)
 
 	camera := camera.New(cameraPosition, cameraOrientation)
-	camera.SetFoV(53)
+	// camera.SetFoV(46)
+	// camera.SetFoV(84)
+
+	scene := scene.New()
+	scene.AddCamera("main", &camera)
+
+	cube := shapes.NewCube(point.NewPoint3D(500, 400, 200), point.NewPoint3D(700, 600, 400))
+	scene.AddPolygon3D(cube)
+
+	cube = cube.MoveAlongY(250)
+	// scene.AddPolygon3D(cube)
+	scene.AddPolygon3D(*cube.RotateAroundX(-theta))
+
+	cube = cube.MoveAlongY(250)
+	// scene.AddPolygon3D(cube)
+	scene.AddPolygon3D(*cube.RotateAroundY(-theta))
+
+	cube = cube.MoveAlongY(250)
+	// scene.AddPolygon3D(cube)
+	scene.AddPolygon3D(*cube.RotateAroundZ(-theta))
+
+	vertices3d := []point.Point3D{
+		point.NewPoint3D(50, 640, 200),
+		point.NewPoint3D(130, 640, 200),
+		point.NewPoint3D(60, 700, 200),
+		point.NewPoint3D(120, 700, 200),
+		point.NewPoint3D(70, 640, 260),
+		point.NewPoint3D(150, 640, 260),
+		point.NewPoint3D(60, 700, 260),
+		point.NewPoint3D(120, 700, 260),
+	}
+	edges3d := [][2]int{
+		{0, 1}, {0, 2}, {0, 4},
+		{3, 1}, {3, 2}, {3, 7},
+		{5, 1}, {5, 4}, {5, 7},
+		{6, 2}, {6, 4}, {6, 7},
+	}
+
+	polygon3d := shapes.NewPolygon3D(vertices3d, edges3d)
+	_ = polygon3d
+	scene.AddPolygon3D(*polygon3d.MoveAlongXButPointer(dt).MoveAlongZButPointer(ds).RotateAroundX(-theta).RotateAroundY(-theta))
+
 	projector := projector.NewPerspectiveProjector()
-	projector.SetCamera(camera)
+	// projector := projector.NewOrthogonalProjector()
+	renderer := renderer.New(projector)
+	renderer.RenderScene(scene, b.width, b.height, pixels)
 
 	b.drawCrosshair(cameraPosition, pixels)
+}
+
+func (b *Board) DrawScene2(pixels []byte, counter, focalLength int) {
+	theta := float64(counter%360) * math.Pi / 180.0
+	d := 50
+	dt := d + counter%b.width
+	_ = dt
+	ds := int(float64(d) * math.Sin(theta))
+	dc := int(float64(d) * math.Cos(theta))
+	_ = ds
+	_ = dc
+
+	dthetax := 15 * (math.Sin(theta) + 1) * math.Pi / 180.0
+	_ = dthetax
+	dtheta := 15 * math.Sin(theta) * math.Pi / 180.0
+	_ = dtheta
+	dy := int(-80 * (math.Sin(theta) + 1))
+	_ = dy
+
+	cameraPosition := point.NewPoint3D(b.width/2, b.height/2, 0)
+	// cameraPosition = cameraPosition.MoveAlongZ(ds)
+	// cameraPosition = cameraPosition.MoveAlongYButPointer(dy).MoveAlongZ(ds)
+	// cameraPosition = cameraPosition.MoveAlongXButPointer(ds).MoveAlongY(dc)
+	// cameraPosition = cameraPosition.MoveAlongZButPointer(ds).MoveAlongXButPointer(ds).MoveAlongY(dc)
+	// cameraOrientation := point.NewOrientation(dthetax, 0, 0)
+	cameraOrientation := point.NewOrientation(0, dtheta, 0)
+
+	camera := camera.New(cameraPosition, cameraOrientation)
+	// camera.SetFoV(46)
+	// camera.SetFoV(53)
+
+	scene := scene.New()
+	scene.AddCamera("main", &camera)
 
 	plane := shapes.NewPlane(point.NewPoint3D(b.width/2, 2*b.height/3, 300))
-	planeProjected := projector.ProjectPolygon(plane)
-	b.DrawPolygon(&planeProjected, pixels)
+	scene.AddPolygon3D(plane)
 
-	cube := shapes.NewCube(point.NewPoint3D(b.width/2-20, 2*b.height/3-40, 280), point.NewPoint3D(b.width/2+20, 2*b.height/3, 320))
+	cube := shapes.NewCube(point.NewPoint3D(b.width/2-100, 2*b.height/3-200, 200), point.NewPoint3D(b.width/2+100, 2*b.height/3, 400))
 	cube = *cube.RotateAroundY(theta)
-	cubeProjected := projector.ProjectPolygon(cube)
-	b.DrawPolygon(&cubeProjected, pixels)
-	// b.ProjectPolygon3D(&cube, cameraPosition, cameraOrientation, pixels)
+	scene.AddPolygon3D(cube)
+
+	projector := projector.NewPerspectiveProjector()
+	// projector := projector.NewOrthogonalProjector()
+	renderer := renderer.New(projector)
+	renderer.RenderScene(scene, b.width, b.height, pixels)
+
+	b.drawCrosshair(cameraPosition, pixels)
 }
 
 func (b *Board) drawCrosshair(cameraPosition point.Point3D, pixels []byte) {
@@ -161,66 +242,6 @@ func (b *Board) drawCrosshair(cameraPosition point.Point3D, pixels []byte) {
 	b.colorPixel(cameraPosition.X, cameraPosition.Y+1, pixels)
 	b.colorPixel(cameraPosition.X, cameraPosition.Y-1, pixels)
 }
-
-func (b *Board) DrawTeapot(pixels []byte, counter, focalLength int) {
-	theta := float64((int(1.5*float64(counter)))%360) * math.Pi / 180.0
-	teapot := shapes.NewTeapot()
-	b.DrawPolygon3D(teapot.RotateAroundX(math.Pi/2).RotateAroundY(-theta), focalLength, pixels)
-}
-
-// DrawPolygon draws a polygon based on vertices and edges matrices
-func (b *Board) DrawPolygon(polygon *shapes.Polygon2D, pixels []byte) {
-	for _, edge := range polygon.Edges {
-		line := shapes.NewLine(polygon.Vertices[edge[0]], polygon.Vertices[edge[1]])
-		b.DrawLine(line, pixels)
-	}
-}
-
-// DrawPolygon3D draws a 3D polygon based on vertices and edges matrices
-func (b *Board) DrawPolygon3D(polygon *shapes.Polygon3D, focalLength int, pixels []byte) {
-	pc := polygon.CalculateFlatCenterPoint()
-	for _, edge := range polygon.Edges {
-		line := shapes.NewLine3D(polygon.Vertices[edge[0]], polygon.Vertices[edge[1]])
-		b.DrawLine3D(line, pc, focalLength, pixels)
-	}
-}
-
-// func (b *Board) ProjectPolygon3D(polygon *shapes.Polygon3D, cameraPosition point.Point3D, cameraOrientation point.Orientation, pixels []byte) {
-// 	for _, edge := range polygon.Edges {
-// 		edge := shapes.NewLine3D(polygon.Vertices[edge[0]], polygon.Vertices[edge[1]])
-// 		b.ProjectEdge(edge, cameraPosition, cameraOrientation, pixels)
-// 	}
-// }
-
-// DrawLine3DRelativeToPoint draws a line
-func (b *Board) DrawLine3DRelativeToPoint(p1, p2 point.Point3D, pc point.Point2D, focalLength int, pixels []byte) {
-	line := shapes.NewLine3D(p1, p2)
-	b.DrawLine3D(line, pc, focalLength, pixels)
-}
-
-// DrawLine draws a line
-func (b *Board) DrawLine(l shapes.Line, pixels []byte) {
-	for _, p := range l.PlotLine() {
-		b.colorPixel(p.X, p.Y, pixels)
-	}
-}
-
-// DrawLine3D draws a 3D line
-func (b *Board) DrawLine3D(l shapes.Line3D, pc point.Point2D, focalLength int, pixels []byte) {
-	for _, p := range l.PlotLine(pc, focalLength) {
-		b.color3DPixel(p.X, p.Y, p.D, pixels)
-	}
-}
-
-// ProjectEdge draws projected line
-// func (b *Board) ProjectEdge(l shapes.Line3D, cameraPosition point.Point3D, cameraOrientation point.Orientation, pixels []byte) {
-// 	for _, p := range l.PlotProjectedLine(cameraPosition, cameraOrientation) {
-// 		x := p.X + cameraPosition.X
-// 		y := p.Y + cameraPosition.Y
-// 		// b.colorPixel(x, y, pixels)
-// 		b.color3DPixel(x, y, p.D, pixels)
-// 	}
-// }
 
 func (b *Board) colorPixel(x, y int, pixels []byte) {
 	if x >= 0 && x < b.width && y > 0 && y < b.height {

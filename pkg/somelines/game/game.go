@@ -59,7 +59,6 @@ func New() *Game {
 }
 
 func (g *Game) getWindowSize() (int, int) {
-	var factor float32 = 3
 	return int(float32(g.screenWidth) * factor), int(float32(g.screenHeight) * factor)
 }
 
@@ -162,7 +161,8 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	}
 	g.clearPixels()
 	// g.board.Draw(g.pixels, g.counter, g.focalLength)
-	g.board.DrawScene(g.pixels, g.counter, g.focalLength)
+	// g.board.DrawScene(g.pixels, g.counter, g.focalLength)
+	g.board.DrawScene2(g.pixels, g.counter, g.focalLength)
 	// g.board.DrawTeapot(g.pixels, g.counter, g.focalLength)
 	screen.WritePixels(g.pixels)
 }
