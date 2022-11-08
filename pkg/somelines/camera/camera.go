@@ -30,7 +30,7 @@ type Screen struct {
 
 func New(position point.Point3D, orientation point.Orientation) Camera {
 	aspect := 16.0 / 9.0
-	vh := 9.0
+	vh := 3.0
 	vw := vh * aspect
 	c := Camera{
 		Position:          position,
