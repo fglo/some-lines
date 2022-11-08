@@ -55,39 +55,6 @@ func (p *Point3D) Clone() Point3D {
 	return *p
 }
 
-func (p *Point3D) To2D(focalLength int) Point2D {
-	xp := int(float64(p.X*focalLength) / float64(p.Z+focalLength))
-	yp := int(float64(p.Y*focalLength) / float64(p.Z+focalLength))
-
-	return Point2D{xp, yp}
-}
-
-func (p *Point3D) To2DRelativeToPoint(pc Point2D, focalLength int) Point2D {
-	x := p.X - pc.X
-	y := p.Y - pc.Y
-
-	xp := int(float64(x*focalLength) / float64(p.Z+focalLength))
-	yp := int(float64(y*focalLength) / float64(p.Z+focalLength))
-
-	return Point2D{xp + pc.X, yp + pc.Y}
-}
-
-func (p *Point3D) Project(cameraPosition Point3D, cameraOrientation Orientation) Point2D {
-	ac := NewPoint3D(p.X-cameraPosition.X, p.Y-cameraPosition.Y, p.Z-cameraPosition.Z)
-	d := ac.RotateAroundX(cameraOrientation.X).RotateAroundY(cameraOrientation.Y).RotateAroundZ(cameraOrientation.Z)
-
-	// pp := d.To2D(cameraPosition.Z)
-	// return pp
-
-	x := d.X * 20 / d.Z
-	y := d.Y * 20 / d.Z
-
-	x = x * 300 / 600
-	y = y * 300 / 600
-
-	return NewPoint2D(x, y)
-}
-
 func (p *Point3D) MoveAlongX(dx int) Point3D {
 	return Point3D{p.X + dx, p.Y, p.Z}
 }
@@ -176,6 +143,21 @@ func (p *Point3D) RotateAroundZRelativeToPoint(pc Point3D, theta float64) Point3
 	yr := int(float64(x)*sinTheta + float64(y)*cosTheta)
 
 	return Point3D{xr + pc.X, yr + pc.Y, z}
+}
+
+type Point3DNdc struct {
+	X float64
+	Y float64
+	Z int
+}
+
+func NewPoint3DNdc(x, y float64, z int) Point3DNdc {
+	p := Point3DNdc{X: x, Y: y, Z: z}
+	return p
+}
+
+func (p *Point3DNdc) Clone() Point3DNdc {
+	return *p
 }
 
 type ProjectedPoint3D struct {

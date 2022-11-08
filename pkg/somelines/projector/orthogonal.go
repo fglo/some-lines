@@ -6,11 +6,19 @@ import (
 	"github.com/fglo/some-lines/pkg/somelines/shapes"
 )
 
+// TODO: real orthographic projection
+// Possibility to do isometric projection
+
 type OrthogonalProjector struct {
+	Cw int
+	Ch int
 }
 
-func NewOrthogonalProjector() Projector {
-	op := OrthogonalProjector{}
+func NewOrthogonalProjector(cw, ch int) Projector {
+	op := OrthogonalProjector{
+		Cw: cw,
+		Ch: ch,
+	}
 	return &op
 }
 
@@ -29,11 +37,11 @@ func (op *OrthogonalProjector) projectPoint(point3d point.Point3D, pc point.Poin
 	z := point3d.Z - c.Position.Z
 	fl := c.FocalLength
 
-	xp := int(float64(x*fl) / float64(z+fl))
-	yp := int(float64(y*fl) / float64(z+fl))
+	xp := int(float64(x)*fl/float64(z) + fl)
+	yp := int(float64(y)*fl/float64(z) + fl)
 
-	xp = xp * 300 / c.Vw
-	yp = yp * 300 / c.Vh
+	// xp = xp * op.Cw / c.Vw
+	// yp = yp * op.Ch / c.Vh
 
 	return point.NewProjectedPoint3D(xp+pc.X, yp+pc.Y, float64(point3d.Z))
 }

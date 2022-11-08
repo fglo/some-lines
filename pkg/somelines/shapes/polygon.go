@@ -121,25 +121,6 @@ func NewPolygon3D(vertices []point.Point3D, edges [][2]int) Polygon3D {
 	return p
 }
 
-func (p *Polygon3D) Project(cameraPosition point.Point3D, cameraOrientation point.Orientation) []Line {
-	lines := make([]Line, 0)
-	for _, edge := range p.Edges {
-		v1 := p.Vertices[edge[0]]
-		v1p := v1.Project(cameraPosition, cameraOrientation)
-		// v1.X = v1p.X
-		// v1.Y = v1p.Y
-
-		v2 := p.Vertices[edge[1]]
-		v2p := v2.Project(cameraPosition, cameraOrientation)
-		// v2.X = v2p.X
-		// v2.Y = v2p.Y
-
-		line := NewLine(v1p, v2p)
-		lines = append(lines, line)
-	}
-	return lines
-}
-
 func (p *Polygon3D) MoveAlongX(dx int) Polygon3D {
 	p2 := *p
 	vertices := make([]point.Point3D, 0)
