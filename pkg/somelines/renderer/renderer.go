@@ -26,6 +26,10 @@ func (r *Renderer) RenderScene(s scene.Scene3D, screenWidth, screenHeight int, p
 		projected := r.Projector.ProjectPolygon(p, s.ActiveCamera)
 		r.RenderPolygon(&projected, *s.ActiveCamera, screenWidth, screenHeight, pixels)
 	}
+	for _, p := range s.Polygons3Df {
+		projected := r.Projector.ProjectPolygon3Df(p, s.ActiveCamera)
+		r.RenderPolygon(&projected, *s.ActiveCamera, screenWidth, screenHeight, pixels)
+	}
 }
 
 func (r *Renderer) RenderPolygon(polygon *shapes.ProjectedPolygon3D, c camera.Camera, screenWidth, screenHeight int, pixels []byte) {

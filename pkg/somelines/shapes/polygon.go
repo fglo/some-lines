@@ -121,6 +121,16 @@ func NewPolygon3D(vertices []point.Point3D, edges [][2]int) Polygon3D {
 	return p
 }
 
+type Polygon3Df struct {
+	Vertices []point.Point3Df
+	Edges    [][2]int
+}
+
+func NewPolygon3Df(vertices []point.Point3Df, edges [][2]int) Polygon3Df {
+	p := Polygon3Df{Vertices: vertices, Edges: edges}
+	return p
+}
+
 func (p *Polygon3D) MoveAlongX(dx int) Polygon3D {
 	p2 := *p
 	vertices := make([]point.Point3D, 0)

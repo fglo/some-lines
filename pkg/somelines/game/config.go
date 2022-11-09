@@ -4,7 +4,7 @@
 package game
 
 const (
-	factor       float32 = 0.5
-	screenWidth          = 1800
-	screenHeight         = 1012
+	factor       float32 = 1
+	screenWidth          = 640
+	screenHeight         = 480
 )

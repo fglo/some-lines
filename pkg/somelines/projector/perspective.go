@@ -29,36 +29,58 @@ func (pp *PerspectiveProjector) ProjectPolygon(polygon shapes.Polygon3D, c *came
 	return shapes.NewProjectedPolygon3D(vs, polygon.Edges)
 }
 
-func (pp *PerspectiveProjector) projectPoint(point3d point.Point3D, c *camera.Camera) point.ProjectedPoint3D {
-	pointNDC := c.ProjectPoint(point3d)
-
-	x := int(math.Floor(pointNDC.X * float64(pp.Cw)))
-	y := int(math.Floor((1 - pointNDC.Y) * float64(pp.Ch)))
-
-	return point.NewProjectedPoint3D(x, y, float64(pointNDC.Z))
+func (pp *PerspectiveProjector) ProjectPolygon3Df(polygon shapes.Polygon3Df, c *camera.Camera) shapes.ProjectedPolygon3D {
+	vs := make([]point.ProjectedPoint3D, 0)
+	for _, v := range polygon.Vertices {
+		vs = append(vs, pp.projectPoint3Df(v, c))
+	}
+	return shapes.NewProjectedPolygon3D(vs, polygon.Edges)
 }
 
-// func (pp *PerspectiveProjector) projectPoint(point3d point.Point3D, c *camera.Camera) point.ProjectedPoint3D {
-// 	ac := point.NewPoint3D(point3d.X-c.Position.X, point3d.Y-c.Position.Y, point3d.Z-c.Position.Z)
-// 	// ac := point3d
-// 	d := ac.RotateAroundX(c.Orientation.X).RotateAroundY(c.Orientation.Y).RotateAroundZ(c.Orientation.Z)
+func (pp *PerspectiveProjector) projectPoint(point3d point.Point3D, c *camera.Camera) point.ProjectedPoint3D {
+	// TODO: implement world_to_camera transformation matrix
+	ac := point.NewPoint3D(point3d.X-int(c.Position.X), point3d.Y-int(c.Position.Y), point3d.Z-int(c.Position.Z))
+	d := ac.RotateAroundX(c.Orientation.X).RotateAroundY(c.Orientation.Y).RotateAroundZ(c.Orientation.Z)
 
-// 	x := d.X * c.NearClippingPlane
-// 	y := d.Y * c.NearClippingPlane
-// 	if d.Z != 0 {
-// 		x /= -d.Z
-// 		y /= -d.Z
-// 	}
+	x := float64(d.X) * c.NearClippingPlane
+	y := float64(d.Y) * c.NearClippingPlane
+	if d.Z != 0 {
+		x /= float64(-d.Z)
+		y /= float64(-d.Z)
+	}
 
-// 	xNormalized := (float64(x) + float64(c.Vw)/2.0) / float64(c.Vw)
-// 	yNormalized := (float64(y) + float64(c.Vh)/2.0) / float64(c.Vh)
+	xNdc := (float64(x) + float64(c.Vw)/2.0) / float64(c.Vw)
+	yNdc := (float64(y) + float64(c.Vh)/2.0) / float64(c.Vh)
 
-// 	x = int(math.Floor(xNormalized * float64(pp.Cw)))
-// 	y = int(math.Floor((1 - yNormalized) * float64(pp.Ch)))
+	xRastered := int(math.Floor(xNdc * float64(pp.Cw)))
+	yRastered := int(math.Floor((1 - yNdc) * float64(pp.Ch)))
 
-// 	// x = x * pp.Cw / c.Vw
-// 	// y = y * pp.Ch / c.Vh
+	return point.NewProjectedPoint3D(xRastered, yRastered, float64(d.Z))
+}
 
-// 	// return point.NewProjectedPoint3D(x+c.Position.X, y+c.Position.Y, float64(d.Z))
-// 	return point.NewProjectedPoint3D(x, y, float64(d.Z))
-// }
+func (pp *PerspectiveProjector) projectPoint3Df(point3d point.Point3Df, c *camera.Camera) point.ProjectedPoint3D {
+	// TODO: implement world_to_camera transformation matrix
+	// ac := point.NewPoint3Df(point3d.X-c.Position.X, point3d.Y-c.Position.Y, point3d.Z-c.Position.Z)
+	// d := ac.RotateAroundX(c.Orientation.X).RotateAroundY(c.Orientation.Y).RotateAroundZ(c.Orientation.Z)
+
+	d := point.NewPoint3Df(
+		point3d.X*c.CameraToWorld[0][0]+point3d.Y*c.CameraToWorld[0][1]+point3d.Z*c.CameraToWorld[0][2]+c.CameraToWorld[0][3],
+		point3d.X*c.CameraToWorld[1][0]+point3d.Y*c.CameraToWorld[1][1]+point3d.Z*c.CameraToWorld[1][2]+c.CameraToWorld[1][3],
+		point3d.X*c.CameraToWorld[2][0]+point3d.Y*c.CameraToWorld[2][1]+point3d.Z*c.CameraToWorld[2][2]+c.CameraToWorld[2][3],
+	)
+
+	x := float64(d.X) * c.NearClippingPlane
+	y := float64(d.Y) * c.NearClippingPlane
+	if d.Z != 0 {
+		x /= float64(-d.Z)
+		y /= float64(-d.Z)
+	}
+
+	xNdc := (float64(x) + float64(c.Vw)/2.0) / float64(c.Vw)
+	yNdc := (float64(y) + float64(c.Vh)/2.0) / float64(c.Vh)
+
+	xRastered := int(math.Floor(xNdc * float64(pp.Cw)))
+	yRastered := int(math.Floor((1 - yNdc) * float64(pp.Ch)))
+
+	return point.NewProjectedPoint3D(xRastered, yRastered, float64(-d.Z))
+}

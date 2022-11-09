@@ -145,19 +145,70 @@ func (p *Point3D) RotateAroundZRelativeToPoint(pc Point3D, theta float64) Point3
 	return Point3D{xr + pc.X, yr + pc.Y, z}
 }
 
-type Point3DNdc struct {
+type Point3Df struct {
 	X float64
 	Y float64
-	Z int
+	Z float64
 }
 
-func NewPoint3DNdc(x, y float64, z int) Point3DNdc {
-	p := Point3DNdc{X: x, Y: y, Z: z}
+func NewPoint3Df(x, y, z float64) Point3Df {
+	p := Point3Df{X: x, Y: y, Z: z}
 	return p
 }
 
-func (p *Point3DNdc) Clone() Point3DNdc {
+func (p *Point3Df) Clone() Point3Df {
 	return *p
+}
+
+func (p *Point3Df) MoveAlongX(dx float64) Point3Df {
+	return Point3Df{p.X + dx, p.Y, p.Z}
+}
+
+func (p *Point3Df) MoveAlongY(dy float64) Point3Df {
+	return Point3Df{p.X, p.Y + dy, p.Z}
+}
+
+func (p *Point3Df) MoveAlongZ(dz float64) Point3Df {
+	return Point3Df{p.X, p.Y, p.Z + dz}
+}
+
+func (p *Point3Df) MoveAlongXButPointer(dx float64) *Point3Df {
+	return &Point3Df{p.X + dx, p.Y, p.Z}
+}
+
+func (p *Point3Df) MoveAlongYButPointer(dy float64) *Point3Df {
+	return &Point3Df{p.X, p.Y + dy, p.Z}
+}
+
+func (p *Point3Df) MoveAlongZButPointer(dz float64) *Point3Df {
+	return &Point3Df{p.X, p.Y, p.Z + dz}
+}
+
+func (p *Point3Df) RotateAroundX(theta float64) *Point3Df {
+	sinTheta, cosTheta := math.Sincos(theta)
+
+	yr := float64(p.Y)*cosTheta - float64(p.Z)*sinTheta
+	zr := float64(p.Y)*sinTheta + float64(p.Z)*cosTheta
+
+	return &Point3Df{p.X, yr, zr}
+}
+
+func (p *Point3Df) RotateAroundY(theta float64) *Point3Df {
+	sinTheta, cosTheta := math.Sincos(theta)
+
+	xr := float64(p.X)*cosTheta + float64(p.Z)*sinTheta
+	zr := -float64(p.X)*sinTheta + float64(p.Z)*cosTheta
+
+	return &Point3Df{xr, p.Y, zr}
+}
+
+func (p *Point3Df) RotateAroundZ(theta float64) *Point3Df {
+	sinTheta, cosTheta := math.Sincos(theta)
+
+	xr := float64(p.X)*cosTheta - float64(p.Y)*sinTheta
+	yr := float64(p.X)*sinTheta + float64(p.Y)*cosTheta
+
+	return &Point3Df{xr, yr, p.Z}
 }
 
 type ProjectedPoint3D struct {

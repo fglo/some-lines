@@ -134,7 +134,7 @@ func (b *Board) DrawScene(pixels []byte, counter, focalLength int) {
 	dy := int(-80 * (math.Sin(theta) + 1))
 	_ = dy
 
-	cameraPosition := point.NewPoint3D(b.width/2, b.height/2, 0)
+	cameraPosition := point.NewPoint3Df(float64(b.width/2.0), float64(b.height)/2.0, 0)
 	cameraOrientation := point.NewOrientation(1*math.Pi/180.0, 0, 0)
 
 	camera := camera.New(cameraPosition, cameraOrientation)
@@ -185,7 +185,7 @@ func (b *Board) DrawScene(pixels []byte, counter, focalLength int) {
 	renderer := renderer.New(projector)
 	renderer.RenderScene(scene, b.width, b.height, pixels)
 
-	b.drawCrosshair(cameraPosition, pixels)
+	// b.drawCrosshair(cameraPosition, pixels)
 }
 
 func (b *Board) DrawScene2(pixels []byte, counter, focalLength int) {
@@ -205,40 +205,42 @@ func (b *Board) DrawScene2(pixels []byte, counter, focalLength int) {
 	dy := int(-80 * (math.Sin(theta) + 1))
 	_ = dy
 
-	cameraPosition := point.NewPoint3D(0, 100, 0)
-	// cameraPosition := point.NewPoint3D(0, 0, 0)
+	cameraPosition := point.NewPoint3Df(0, 3, -3)
 	cameraOrientation := point.NewOrientation(0, 0, 0)
 	mainCamera := camera.New(cameraPosition, cameraOrientation)
 
-	// cameraPosition = cameraPosition.MoveAlongZ(ds)
-	// cameraPosition = cameraPosition.MoveAlongYButPointer(dy).MoveAlongZ(ds)
-	// cameraPosition = cameraPosition.MoveAlongXButPointer(ds).MoveAlongY(dc)
-	// cameraPosition = cameraPosition.MoveAlongZButPointer(ds).MoveAlongXButPointer(ds).MoveAlongY(dc)
-	cameraPosition = cameraPosition.MoveAlongXButPointer(300).MoveAlongZ(-300)
-	// cameraOrientation := point.NewOrientation(0, 0, 0)
-	// cameraOrientation := point.NewOrientation(dthetax, 0, 0)
-	// cameraOrientation := point.NewOrientation(0, dtheta, 0)
+	cameraPosition = cameraPosition.MoveAlongXButPointer(5).MoveAlongZ(-2)
 	cameraOrientation = point.NewOrientation(0, -math.Pi/2.0, 0)
-
 	secondaryCamera := camera.New(cameraPosition, cameraOrientation)
+
+	cameraPosition = cameraPosition.MoveAlongXButPointer(-5).MoveAlongZ(-2)
+	cameraOrientation = point.NewOrientation(0, -math.Pi, 0)
+	thirdaryCamera := camera.New(cameraPosition, cameraOrientation)
 
 	scene := scene.New()
 	scene.AddCamera("main", &mainCamera)
 	scene.AddCamera("secondary", &secondaryCamera)
+	scene.AddCamera("thirdary", &thirdaryCamera)
 
-	if counter%200 < 100 {
-		scene.SetActiveCamera("main")
-	} else {
-		scene.SetActiveCamera("secondary")
-	}
+	// mod := counter % 300
+	// if mod < 100 {
+	// 	scene.SetActiveCamera("main")
+	// } else if mod < 200 {
+	// 	scene.SetActiveCamera("secondary")
+	// } else {
+	// 	scene.SetActiveCamera("thirdary")
+	// }
 
-	plane := shapes.NewPlane(point.NewPoint3D(0, 0, -300))
+	// plane := shapes.NewPlane(point.NewPoint3D(0, 0, -300))
 	// plane := shapes.NewPlane(point.NewPoint3D(b.width/2, b.width/2, 300))
-	scene.AddPolygon3D(plane)
+	// scene.AddPolygon3D(plane)
 
-	cube := shapes.NewCube(point.NewPoint3D(-50, 100, -250), point.NewPoint3D(50, 0, -350))
-	cube = *cube.RotateAroundY(theta)
-	scene.AddPolygon3D(cube)
+	// cube := shapes.NewCube(point.NewPoint3D(-50, 100, -250), point.NewPoint3D(50, 0, -350))
+	// cube = *cube.RotateAroundY(theta)
+	// scene.AddPolygon3D(cube)
+
+	boat := shapes.NewBoat()
+	scene.AddPolygon3Df(boat)
 
 	projector := projector.NewPerspectiveProjector(b.width, b.height)
 	// projector := projector.NewOrthogonalProjector(b.width, b.height)

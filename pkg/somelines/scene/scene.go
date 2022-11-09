@@ -8,7 +8,9 @@ import (
 )
 
 type Scene3D struct {
-	Polygons3D   []shapes.Polygon3D
+	Polygons3D  []shapes.Polygon3D
+	Polygons3Df []shapes.Polygon3Df
+
 	Cameras      map[string]*camera.Camera
 	ActiveCamera *camera.Camera
 }
@@ -22,6 +24,10 @@ func New() Scene3D {
 
 func (s *Scene3D) AddPolygon3D(p shapes.Polygon3D) {
 	s.Polygons3D = append(s.Polygons3D, p)
+}
+
+func (s *Scene3D) AddPolygon3Df(p shapes.Polygon3Df) {
+	s.Polygons3Df = append(s.Polygons3Df, p)
 }
 
 func (s *Scene3D) AddCamera(lbl string, c *camera.Camera) {

@@ -7,7 +7,7 @@ import (
 )
 
 type Camera struct {
-	Position    point.Point3D
+	Position    point.Point3Df
 	Orientation point.Orientation
 
 	Vw          float64
@@ -19,6 +19,8 @@ type Camera struct {
 	FarClippingPlane  float64
 
 	Screen Screen
+
+	CameraToWorld [4][4]float64
 }
 
 type Screen struct {
@@ -28,20 +30,36 @@ type Screen struct {
 	BottomRight point.Point2D
 }
 
-func New(position point.Point3D, orientation point.Orientation) Camera {
+func New(position point.Point3Df, orientation point.Orientation) Camera {
 	aspect := 16.0 / 9.0
-	vh := 3.0
+	// aspect := 0.980 / 0.735
+	vh := 0.9
 	vw := vh * aspect
+
+	sinX, cosX := math.Sincos(orientation.X)
+	sinY, cosY := math.Sincos(orientation.Y)
+	sinZ, cosZ := math.Sincos(orientation.Z)
+
+	cameraToWorld := [4][4]float64{
+		{cosY * cosZ, -cosY * sinZ, sinY, position.X},
+		{cosX*sinZ + sinX*sinY*cosZ, cosX*cosZ - sinX*sinY*sinZ, -sinX * cosY, position.Y},
+		{sinX*sinZ - cosX*sinY*cosZ, sinX*cosZ - cosX*sinY*sinZ, cosX * cosY, position.Z},
+		{0, 0, 0, 1},
+	}
+
 	c := Camera{
 		Position:          position,
 		Orientation:       orientation,
 		Vw:                vw,
 		Vh:                vh,
 		Aspect:            aspect,
-		NearClippingPlane: 1,
+		NearClippingPlane: 0.1,
 		FarClippingPlane:  1000,
+		// FocalLength:       35,
+		CameraToWorld: cameraToWorld,
 	}
 	c.SetFoV(46)
+	// c.SetFoV(53)
 
 	right := (c.Vw * 0.5 / c.FocalLength) * c.NearClippingPlane
 	left := -right
@@ -62,22 +80,4 @@ func New(position point.Point3D, orientation point.Orientation) Camera {
 func (c *Camera) SetFoV(fov float64) {
 	fov = math.Mod(fov, 360)
 	c.FocalLength = float64(c.Vw) * 0.5 / math.Tan(fov*0.5*math.Pi/180.0)
-}
-
-func (c *Camera) ProjectPoint(point3d point.Point3D) point.Point3DNdc {
-	ac := point.NewPoint3D(point3d.X-c.Position.X, point3d.Y-c.Position.Y, point3d.Z-c.Position.Z)
-	// ac := point3d
-	d := ac.RotateAroundX(c.Orientation.X).RotateAroundY(c.Orientation.Y).RotateAroundZ(c.Orientation.Z)
-
-	x := float64(d.X) * c.NearClippingPlane
-	y := float64(d.Y) * c.NearClippingPlane
-	if d.Z != 0 {
-		x /= float64(-d.Z)
-		y /= float64(-d.Z)
-	}
-
-	xNormalized := (float64(x) + float64(c.Vw)/2.0) / float64(c.Vw)
-	yNormalized := (float64(y) + float64(c.Vh)/2.0) / float64(c.Vh)
-
-	return point.NewPoint3DNdc(xNormalized, yNormalized, -d.Z)
 }
