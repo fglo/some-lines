@@ -76,8 +76,8 @@ func (pp *PerspectiveProjector) projectPoint3Df(point3d point.Point3Df, c *camer
 		y /= float64(-d.Z)
 	}
 
-	xNdc := (float64(x) + float64(c.Vw)/2.0) / float64(c.Vw)
-	yNdc := (float64(y) + float64(c.Vh)/2.0) / float64(c.Vh)
+	xNdc := (x + c.Vw*0.5) / c.Vw
+	yNdc := (y + c.Vh*0.5) / c.Vh
 
 	xRastered := int(math.Floor(xNdc * float64(pp.Cw)))
 	yRastered := int(math.Floor((1 - yNdc) * float64(pp.Ch)))

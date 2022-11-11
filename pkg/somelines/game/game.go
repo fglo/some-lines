@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/fglo/some-lines/pkg/somelines/board"
+	"github.com/fglo/some-lines/pkg/somelines/scene"
 	ebiten "github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
 )
@@ -38,6 +39,8 @@ type Game struct {
 	focalLength int
 
 	counter int
+
+	scenes []scene.Scene3D
 }
 
 // New generates a new Game object.
@@ -51,6 +54,9 @@ func New() *Game {
 	g.focalLength = 80
 
 	g.counter = 0
+
+	g.scenes = append(g.scenes, g.board.PrepareTestScene())
+	g.scenes = append(g.scenes, g.board.PrepareBoatScene())
 
 	ebiten.SetWindowSize(g.getWindowSize())
 	ebiten.SetWindowTitle("Particles' Rules of Attraction")
@@ -160,10 +166,8 @@ func (g *Game) Draw(screen *ebiten.Image) {
 		g.counter--
 	}
 	g.clearPixels()
-	// g.board.Draw(g.pixels, g.counter, g.focalLength)
-	// g.board.DrawScene(g.pixels, g.counter, g.focalLength)
-	g.board.DrawScene2(g.pixels, g.counter, g.focalLength)
-	// g.board.DrawTeapot(g.pixels, g.counter, g.focalLength)
+	// g.board.DrawTestScene(g.scenes[0], g.pixels, g.counter)
+	g.board.DrawBoatScene(g.scenes[1], g.pixels, g.counter)
 	screen.WritePixels(g.pixels)
 }
 

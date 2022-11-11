@@ -22,12 +22,21 @@ func New() Scene3D {
 	}
 }
 
-func (s *Scene3D) AddPolygon3D(p shapes.Polygon3D) {
+func (s *Scene3D) AddPolygon3D(p shapes.Polygon3D) int {
 	s.Polygons3D = append(s.Polygons3D, p)
+	return len(s.Polygons3D) - 1
 }
 
-func (s *Scene3D) AddPolygon3Df(p shapes.Polygon3Df) {
+func (s *Scene3D) GetPolygon3D(id int) shapes.Polygon3D {
+	if id > 0 && id < len(s.Polygons3D) {
+		return s.Polygons3D[id]
+	}
+	return s.Polygons3D[0]
+}
+
+func (s *Scene3D) AddPolygon3Df(p shapes.Polygon3Df) int {
 	s.Polygons3Df = append(s.Polygons3Df, p)
+	return len(s.Polygons3Df) - 1
 }
 
 func (s *Scene3D) AddCamera(lbl string, c *camera.Camera) {

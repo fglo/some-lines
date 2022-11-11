@@ -1,5 +1,7 @@
 package utils
 
+import "math"
+
 func ColorPixel(x, y, screenWidth, screenHeight int, pixels []byte) {
 	if x >= 0 && x < screenWidth && y > 0 && y < screenHeight {
 		i := getPixelsIndex(x, y, screenWidth, screenHeight)
@@ -54,4 +56,9 @@ func keepCoordBetweenMinAndMax(coord, min, max int) int {
 		}
 	}
 	return coord
+}
+
+func Deg2Rad(deg float64) float64 {
+	deg = math.Mod(deg, 360)
+	return deg * math.Pi / 180.0
 }
